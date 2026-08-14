@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BookNook</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; background: #f6f5f1; color: #262421; }
+  .app { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; border-bottom: 3px solid #1f2a44; padding-bottom: 16px; margin-bottom: 24px; }
+  .header-text h1 { margin: 0; font-size: 2.2rem; color: #1f2a44; }
+  .header-text p { margin: 4px 0 0; color: #5c584f; }
+  .header-count { background: #1f2a44; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+  .filter-btn { border: 1px solid #c9c4b6; background: #fff; color: #3a362f; padding: 8px 16px; border-radius: 999px; cursor: pointer; font-size: 0.9rem; transition: background 0.15s ease, color 0.15s ease; }
+  .filter-btn:hover { background: #ece8dd; }
+  .filter-btn.active { background: #c98a3e; border-color: #c98a3e; color: #fff; }
+  .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .empty-state { grid-column: 1 / -1; text-align: center; color: #837e72; padding: 40px 0; }
+  .book-card { position: relative; background: #fff; border: 1px solid #e4e0d3; border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .book-card--out { opacity: 0.6; }
+  .ribbon { position: absolute; top: 12px; right: 12px; background: #b5442e; color: #fff; font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .book-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #c98a3e; font-weight: 600; }
+  .book-title { margin: 2px 0 0; font-size: 1.05rem; color: #1f2a44; }
+  .book-author { margin: 0; font-size: 0.85rem; color: #6a6559; }
+  .book-rating { font-size: 0.85rem; color: #c98a3e; }
+  .book-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
+  .price-old { text-decoration: line-through; color: #9a9484; font-size: 0.85rem; }
+  .price-new { font-size: 1.15rem; font-weight: 700; color: #1f2a44; }
+  .stock { margin-top: 8px; font-size: 0.8rem; font-weight: 600; width: fit-content; padding: 3px 10px; border-radius: 999px; }
+  .stock--in { background: #e3efe1; color: #2f6b3a; }
+  .stock--out { background: #f2e3e0; color: #a04331; }
+  .footer { margin-top: 48px; text-align: center; color: #8a8578; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+const books = [
+  { id: 1, title: "The Silent Orchard", author: "Mira Halden", category: "Fiction", price: 14.99, rating: 4.6, inStock: true, discount: 20 },
+  { id: 2, title: "Clean Code Habits", author: "Devon Okafor", category: "Technology", price: 29.99, rating: 4.8, inStock: true, discount: 0 },
+  { id: 3, title: "Whispers of the Nile", author: "Amara Farouk", category: "History", price: 19.5, rating: 4.3, inStock: false, discount: 0 },
+  { id: 4, title: "Atoms & Ideas", author: "Sam Whitfield", category: "Science", price: 22.0, rating: 4.1, inStock: true, discount: 15 },
+  { id: 5, title: "The Last Cartographer", author: "Elena Voss", category: "Fiction", price: 17.25, rating: 4.9, inStock: true, discount: 0 },
+  { id: 6, title: "Minds and Machines", author: "Devon Okafor", category: "Technology", price: 24.99, rating: 3.9, inStock: false, discount: 0 },
+  { id: 7, title: "Pyramids Reconsidered", author: "Amara Farouk", category: "History", price: 18.0, rating: 4.4, inStock: true, discount: 10 },
+  { id: 8, title: "The Quiet Universe", author: "Sam Whitfield", category: "Science", price: 21.75, rating: 4.7, inStock: true, discount: 0 },
+];
+
+// ---- Header component: receives props, uses && to show the count only if there are books ----
+function Header({ title, subtitle, totalBooks }) {
+  return (
+    <header className="header">
+      <div className="header-text">
+        <h1>{title}</h1>
+        <p>{subtitle}</p>
+      </div>
+      {totalBooks > 0 && (
+        <span className="header-count">{totalBooks} books available</span>
+      )}
+    </header>
+  );
+}
+
+// ---- CategoryFilter component: .map() turns the categories array into buttons ----
+function CategoryFilter({ categories, activeCategory, onSelect }) {
+  return (
+    <div className="filter-bar">
+      {categories.map((category) => (
+        <button
+          key={category}
+          className={category === activeCategory ? "filter-btn active" : "filter-btn"}
+          onClick={() => onSelect(category)}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ---- BookCard component: props + ternary + && ----
+function BookCard({ book }) {
+  const { title, author, category, price, rating, inStock, discount } = book;
+  const finalPrice = discount > 0 ? (price - (price * discount) / 100).toFixed(2) : price.toFixed(2);
+
+  return (
+    <div className={inStock ? "book-card" : "book-card book-card--out"}>
+      {discount > 0 && <span className="ribbon">-{discount}%</span>}
+      <span className="book-category">{category}</span>
+      <h3 className="book-title">{title}</h3>
+      <p className="book-author">by {author}</p>
+      <div className="book-rating">★ {rating.toFixed(1)}</div>
+      <div className="book-price-row">
+        {discount > 0 ? (
+          <>
+            <span className="price-old">${price.toFixed(2)}</span>
+            <span className="price-new">${finalPrice}</span>
+          </>
+        ) : (
+          <span className="price-new">${finalPrice}</span>
+        )}
+      </div>
+      <span className={inStock ? "stock stock--in" : "stock stock--out"}>
+        {inStock ? "In stock" : "Out of stock"}
+      </span>
+    </div>
+  );
+}
+
+// ---- BookList component: .map() renders BookCard, ternary handles the empty state ----
+function BookList({ books }) {
+  return (
+    <section className="book-grid">
+      {books.length > 0 ? (
+        books.map((book) => <BookCard key={book.id} book={book} />)
+      ) : (
+        <p className="empty-state">No books match this category yet.</p>
+      )}
+    </section>
+  );
+}
+
+// ---- Footer component: simple reusable component with a prop ----
+function Footer({ year }) {
+  return (
+    <footer className="footer">
+      <p>&copy; {year} BookNook. Built with React.</p>
+    </footer>
+  );
+}
+
+// ---- App: holds state and wires everything together ----
+function App() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const categories = ["All", ...new Set(books.map((b) => b.category))];
+  const visibleBooks = activeCategory === "All" ? books : books.filter((b) => b.category === activeCategory);
+
+  return (
+    <div className="app">
+      <Header title="BookNook" subtitle="A small catalog of books worth staying up for." totalBooks={books.length} />
+      <CategoryFilter categories={categories} activeCategory={activeCategory} onSelect={setActiveCategory} />
+      <BookList books={visibleBooks} />
+      <Footer year={2026} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
