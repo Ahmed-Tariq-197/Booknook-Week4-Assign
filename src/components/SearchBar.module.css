@@ -1,0 +1,10 @@
+.searchInput {
+  max-width: 300px;
+  border-radius: 999px;
+  border-color: #c9c4b6;
+}
+
+.searchInput:focus {
+  border-color: #c98a3e;
+  box-shadow: 0 0 0 0.2rem rgba(201, 138, 62, 0.2);
+}

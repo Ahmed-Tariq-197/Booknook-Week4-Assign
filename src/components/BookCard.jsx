@@ -1,4 +1,6 @@
-function BookCard({ book }) {
+import FavoriteButton from "./FavoriteButton.jsx";
+
+function BookCard({ book, isFavorite, onToggleFavorite }) {
   const { title, author, category, price, rating, inStock, discount } = book;
 
   const finalPrice = discount > 0 ? (price - (price * discount) / 100).toFixed(2) : price.toFixed(2);
@@ -8,7 +10,12 @@ function BookCard({ book }) {
       {/* && operator: the discount ribbon only renders when there is a discount */}
       {discount > 0 && <span className="ribbon">-{discount}%</span>}
 
-      <span className="book-category">{category}</span>
+      {/* favorite star sits on the left of this row so it doesn't clash with the ribbon */}
+      <div className="book-card-top">
+        <FavoriteButton active={isFavorite} onToggle={onToggleFavorite} />
+        <span className="book-category">{category}</span>
+      </div>
+
       <h3 className="book-title">{title}</h3>
       <p className="book-author">by {author}</p>
 
