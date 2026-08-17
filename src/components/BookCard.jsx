@@ -1,7 +1,10 @@
+import { useDispatch } from "react-redux";
 import FavoriteButton from "./FavoriteButton.jsx";
+import { addToCart } from "../redux/slices/cartSlice.js";
 
 function BookCard({ book, isFavorite, onToggleFavorite }) {
   const { title, author, category, price, rating, inStock, discount } = book;
+  const dispatch = useDispatch();
 
   const finalPrice = discount > 0 ? (price - (price * discount) / 100).toFixed(2) : price.toFixed(2);
 
@@ -37,6 +40,16 @@ function BookCard({ book, isFavorite, onToggleFavorite }) {
       <span className={inStock ? "stock stock--in" : "stock stock--out"}>
         {inStock ? "In stock" : "Out of stock"}
       </span>
+
+      {/* dispatch straight from the card - no need to lift this state up anywhere */}
+      {inStock && (
+        <button
+          className="btn btn-sm btn-outline-primary add-to-cart-btn"
+          onClick={() => dispatch(addToCart({ id: book.id, title, price: Number(finalPrice) }))}
+        >
+          Add to Cart
+        </button>
+      )}
     </div>
   );
 }

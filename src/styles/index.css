@@ -283,3 +283,129 @@ body {
   color: #8a8578;
   font-size: 0.85rem;
 }
+
+/* ---------- add to cart button ---------- */
+.add-to-cart-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+/* ---------- cart badge in navbar ---------- */
+.cart-badge {
+  background: #c98a3e;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+}
+
+/* ---------- theme toggle button ---------- */
+.theme-toggle-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #c9c4b6;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.theme-toggle-btn:hover {
+  background: #ece8dd;
+}
+
+/* ---------- cart page ---------- */
+.cart-page {
+  max-width: 640px;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cart-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e4e0d3;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.cart-title {
+  flex: 1;
+  min-width: 140px;
+  font-weight: 600;
+}
+
+.cart-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-qty {
+  min-width: 20px;
+  text-align: center;
+}
+
+.cart-line-price {
+  min-width: 60px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.cart-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* ---------- dark theme ----------
+   applied to the .theme-dark class on the app root, set from ThemeContext */
+.theme-dark {
+  background: #23211c;
+  color: #e8e4d8;
+}
+
+.theme-dark .header-text h1,
+.theme-dark .page-section h2,
+.theme-dark .book-title,
+.theme-dark .price-new {
+  color: #f4f1e6;
+}
+
+.theme-dark .header-text p,
+.theme-dark .book-author,
+.theme-dark .page-section p {
+  color: #b8b3a3;
+}
+
+.theme-dark .book-card,
+.theme-dark .cart-row {
+  background: #2d2b24;
+  border-color: #47433a;
+}
+
+.theme-dark .filter-btn,
+.theme-dark .theme-toggle-btn {
+  background: #2d2b24;
+  border-color: #47433a;
+  color: #e8e4d8;
+}
+
+.theme-dark .nav-link {
+  color: #cfc9b8;
+}
+
+.theme-dark .navbar-custom {
+  border-color: #47433a;
+}
